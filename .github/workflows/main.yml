@@ -24,10 +24,10 @@ jobs:
 
     - name: Tiến hành Build dự án
       # LƯU Ý: Nhớ thay chữ Tên_File_Của_Bạn thành tên file .sln thực tế của bạn (ví dụ: AlwayOnTop.sln)
-      run: msbuild AlwaysOnTop.sln /p:Configuration=Release
+      run: msbuild AlwaysOnTop.sln /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never
 
     - name: Upload file .exe để tải về
       uses: actions/upload-artifact@v4 # QUAN TRỌNG: Đã sửa v3 thành v4 để sửa lỗi
       with:
         name: Always On Top
-        path: ./**/bin/Release/*.exe
+        path: ./**/bin/Release/*.*
