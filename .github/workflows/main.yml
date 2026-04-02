@@ -1,0 +1,26 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest # Sử dụng máy chủ Windows của GitHub
+
+    steps:
+    - name: Lấy source code về máy chủ
+      uses: actions/checkout@v3
+
+    - name: Cài đặt MSBuild (Công cụ biên dịch của Microsoft)
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Tiến hành Build dự án
+      run: msbuild AlwaysOnTop.sln /p:Configuration=Release
+
+    - name: Upload file .exe để tải về
+      uses: actions/upload-artifact@v3
+      with:
+        name: Always On Top
+        # Đường dẫn tới thư mục chứa file exe sau khi build xong
+        path: ./**/bin/Release/*.exe
