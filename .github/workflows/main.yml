@@ -15,16 +15,48 @@ jobs:
     - name: Cài đặt MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Tiến hành Restore và Build dự án cùng lúc
-      # Thêm cờ -restore vào trước để đồng bộ kiến trúc x64 chuẩn xác
-      run: msbuild AlwaysOnTop.sln -restore /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never /p:AppxPackageSigningEnabled=false
+    - name: Bước 1 - Restore (Tải và nạp thư viện lõi Windows)
+      # Chạy Restore tách biệt để đảm bảo thư viện x64 được nạp hoàn toàn
+      run: msbuild AlwaysOnTop.sln /t:Restore /p:Configuration=Release /p:Platform="x64"
+
+    - name: Bước 2 - Build (Tiến hành biên dịch dự án)
+      # Chạy Build với các thư viện đã sẵn sàng ở Bước 1
+      run: msbuild AlwaysOnTop.sln /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never /p:AppxPackageSigningEnabled=false
 
     - name: Upload file cài đặt để tải về
       uses: actions/upload-artifact@v4
       with:
-        name: UngDungCuaToi
-        # Tải về toàn bộ thư mục Release x64
+        name: Always On Top
         path: ./**/bin/x64/Release/**/*.* ```
+
+# Bạn lưu ý, lần này phần `steps` có đến 5 mục. Khúc mắc lớn nhất của chúng ta ở dự án này chính là việc nạp thư viện lõi, và việc tách ra như trên là "chìa khóa" cuối cùng. Bạn hãy **Commit changes** lại nhé, mình tin chắc lần này dấu tick xanh sẽ hiện lên!
+# name: Build Windows App
+
+# on:
+#   push:
+#     branches: [ "main" ]
+
+# jobs:
+#   build:
+#     runs-on: windows-latest
+
+#     steps:
+#     - name: Lấy source code về máy chủ
+#       uses: actions/checkout@v4
+
+#     - name: Cài đặt MSBuild
+#       uses: microsoft/setup-msbuild@v2
+
+#     - name: Tiến hành Restore và Build dự án cùng lúc
+#       # Thêm cờ -restore vào trước để đồng bộ kiến trúc x64 chuẩn xác
+#       run: msbuild AlwaysOnTop.sln -restore /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never /p:AppxPackageSigningEnabled=false
+
+#     - name: Upload file cài đặt để tải về
+#       uses: actions/upload-artifact@v4
+#       with:
+#         name: UngDungCuaToi
+#         # Tải về toàn bộ thư mục Release x64
+#         path: ./**/bin/x64/Release/**/*.* ```
 
 # Bạn hãy **Commit changes** lại file này. Khi chạy tiến trình mới, hệ thống sẽ đồng bộ kiến trúc từ A đến Z và sẽ vượt qua được bảng lỗi đỏ chót này. Chúc bạn thành công lấy được file app của mình!
 # name: Build Windows App
