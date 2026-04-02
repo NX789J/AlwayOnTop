@@ -1,0 +1,43 @@
+﻿<ContentDialog
+    x:Class="AlwaysOnTop.AboutDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:local="using:AlwaysOnTop"
+    Title="About"
+    CloseButtonText="OK">
+
+    <!--Dirty fix :(--> 
+    <!--https://github.com/microsoft/microsoft-ui-xaml/issues/1779#issuecomment-568172996-->
+    <ContentDialog.Resources>
+        <Style TargetType="local:AboutDialog" BasedOn="{StaticResource DefaultContentDialogStyle}" />
+    </ContentDialog.Resources>
+
+    <Grid>
+        <ScrollViewer>
+            <StackPanel Margin="0,12">
+                <TextBlock Text="Always on Top&#xA;Version 2.0.0&#xA;Copyright (C) Ayamadori" TextWrapping="Wrap"/>
+                <HyperlinkButton Content="Website" NavigateUri="https://github.com/ayamadori/AlwaysOnTop" Margin="0,8,0,0"/>
+                <HyperlinkButton Content="Privacy Policy" NavigateUri="https://ayamadori.github.io/AlwaysOnTop/PRIVACY.html"/>
+                <Button x:Name="RateButton" Margin="0,12,0,0" Click="RateButton_Click">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE728;" Margin="0,0,8,0"/>
+                            <TextBlock Text="Rate &amp; Review"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button x:Name="FeedbackButton" Margin="0,12,0,0" Click="FeedbackButton_Click" Visibility="Collapsed">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE939;" Margin="0,0,8,0"/>
+                            <TextBlock Text="Send feedback"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</ContentDialog>

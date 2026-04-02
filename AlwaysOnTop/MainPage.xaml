@@ -1,0 +1,130 @@
+﻿<Page
+    x:Class="AlwaysOnTop.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Height="32" Visibility="Collapsed" Background="Transparent"/>
+
+        <Grid x:Name="CommBar" Grid.Row="0" HorizontalAlignment="Stretch" Background="{ThemeResource SystemChromeMediumLowColor}" BorderBrush="{ThemeResource SystemChromeHighColor}" BorderThickness="0,1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="54.4"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ProgressRing Grid.Column="0" x:Name="LoadingIndicator" IsActive="False" Margin="8,0" Visibility="Visible"/>
+            <Button Grid.Column="0" x:Name="RefreshButton" Click="RefreshButton_Click" ToolTipService.ToolTip="Refresh (Ctrl+R)" ToolTipService.Placement="Bottom" Margin="8,0" Style="{StaticResource CommandBarFlyoutEllipsisButtonStyle}">
+                <Button.Content>
+                    <FontIcon Glyph="&#xE72C;"/>
+                </Button.Content>
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="R"/>
+                </Button.KeyboardAccelerators>
+            </Button>
+            <TextBox Grid.Column="1" x:Name="AddressBox" PlaceholderText="Enter web address" InputScope="Url" Margin="0,3" HorizontalAlignment="Stretch" Background="{ThemeResource SystemAltHighColor}" KeyDown="AddressBox_KeyDown"/>
+            <Button Grid.Column="2" x:Name="AOTButton" Click="AOTButton_Click" ToolTipService.ToolTip="Always on Top (Ctrl+Up)" ToolTipService.Placement="Bottom" Margin="8,0" Style="{StaticResource CommandBarFlyoutEllipsisButtonStyle}">
+                <Button.Content>
+                    <FontIcon Glyph="&#xEE49;"/>
+                </Button.Content>
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="Up"/>
+                </Button.KeyboardAccelerators>
+            </Button>
+            <Button Grid.Column="2" x:Name="BackButton" Click="BackButton_Click" Visibility="Collapsed" ToolTipService.ToolTip="Back (Ctrl+Down)" ToolTipService.Placement="Bottom" Margin="8,0" Style="{StaticResource CommandBarFlyoutEllipsisButtonStyle}">
+                <Button.Content>
+                    <FontIcon Glyph="&#xEE47;"/>
+                </Button.Content>
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="Down"/>
+                </Button.KeyboardAccelerators>
+            </Button>
+            <Button Grid.Column="3" x:Name="DonateButton" Click="DonateButton_Click" ToolTipService.ToolTip="Donate" ToolTipService.Placement="Bottom" Margin="8,0" Style="{StaticResource CommandBarFlyoutEllipsisButtonStyle}">
+                <Button.Content>
+                    <SymbolIcon Symbol="Like"/>
+                </Button.Content>
+            </Button>
+
+            <Button Grid.Column="4" Margin="0,0,8,0" ToolTipService.ToolTip="See more" ToolTipService.Placement="Bottom" Style="{StaticResource CommandBarFlyoutEllipsisButtonStyle}">
+                <Button.Content>
+                    <FontIcon Glyph="&#xE10C;"/>
+                </Button.Content>
+                <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyoutItem x:Name="MobileViewButton" Text="Mobile View" Icon="CellPhone" Click="MobileViewButton_Click">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Modifiers="Control" Key="M"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Name="PCViewButton" Text="PC View" Visibility="Collapsed" Click="PCViewButton_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE977;"/>
+                            </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Modifiers="Control" Key="P"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSubItem Text="Auto Refresh" Icon="Clock">
+                            <muxc:RadioMenuFlyoutItem Text="None" Click="AutoRefreshButton_Click" IsChecked="True"/>
+                            <muxc:RadioMenuFlyoutItem Text="15 seconds" Click="AutoRefreshButton_Click"/>
+                            <muxc:RadioMenuFlyoutItem Text="30 seconds" Click="AutoRefreshButton_Click"/>
+                            <muxc:RadioMenuFlyoutItem Text="60 seconds" Click="AutoRefreshButton_Click"/>
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutItem x:Name="AboutButton" Text="About" Click="AboutButton_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE946;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
+        
+        <muxc:WebView2 x:Name="BrowserWindow" Grid.Row="1" Margin="0" NavigationStarting="BrowserWindow_NavigationStarting" NavigationCompleted="BrowserWindow_NavigationCompleted" Visibility="Collapsed"/>
+
+        <ScrollViewer x:Name="Howtouse" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel>
+                <TextBlock Margin="8" Text="How to use" Style="{StaticResource TitleTextBlockStyle}"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                    <Image Margin="8" Height="48" Source="Assets/MicrosoftEdge.png"/>
+                    <StackPanel>
+                        <TextBlock Margin="8,4,0,0" Text="1. Open" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Margin="16,4,0,0" Text="Open website in web browser etc." TextWrapping="Wrap"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon Glyph="&#xE72D;" Margin="8" FontSize="48" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" />
+                    <StackPanel>
+                        <TextBlock Margin="8,4,0,0" Text="2. Share" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Margin="16,4,0,0" Text="Select [Share] in the menu." TextWrapping="Wrap"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Image Margin="8" Height="48" Source="Assets/ic_fluent_picture_in_picture_24_filled.png"/>
+                    <StackPanel>
+                        <TextBlock Margin="8,4,0,0" Text="3. Select" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Margin="16,4,0,0" Text="Tap [Alwats on Top]." TextWrapping="Wrap"/>
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock Margin="8" Text="The website is set to Always-on-Top (a.k.a. Picture-in-Picture)." TextWrapping="WrapWholeWords"/>
+                <Button Margin="8" x:Name="OpenBrowserButton" Content="Let's start! (Open browser)" HorizontalAlignment="Stretch" Click="OpenBrowserButton_Click"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel x:Name="ErrorWindow" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
+            <TextBlock x:Name="ErrorTitle" Style="{StaticResource SubtitleTextBlockStyle}"/>
+            <TextBlock x:Name="ErrorContent" Margin="0,8"/>
+        </StackPanel>
+
+    </Grid>
+</Page>
