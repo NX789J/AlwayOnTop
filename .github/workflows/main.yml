@@ -21,14 +21,20 @@ jobs:
         run: nuget restore AlwaysOnTop.sln
 
       - name: Build solution
-        run: msbuild AlwaysOnTop.sln /m /p:Configuration=Release /p:Platform=x64
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vswhere.exe"
+          $vsPath = & $vswhere -latest -requires Microsoft.Component.MSBuild -property installationPath
+          $msbuild = Join-Path $vsPath "MSBuild\\Current\\Bin\\MSBuild.exe"
+          Write-Host "Using MSBuild at $msbuild"
+          & $msbuild AlwaysOnTop.sln /m /p:Configuration=Release /p:Platform=x64
 
       - name: Collect build outputs
         shell: pwsh
         run: |
           $output = Join-Path $PWD 'AlwaysOnTop\\AlwaysOnTop\\bin\\x64\\Release'
           $artifact = Join-Path $PWD 'artifacts'
-          if (Test-Path $artifact) { Remove-Item $artifact -Recurse -Force }
+          if (Test-Path $artifact) { Remove-Item -Recurse -Force $artifact }
           New-Item -ItemType Directory -Path $artifact | Out-Null
           Copy-Item -Path "$output\\*" -Destination $artifact -Recurse -Force
           Write-Host "Build outputs copied to $artifact"
