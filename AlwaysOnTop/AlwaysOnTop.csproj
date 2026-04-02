@@ -239,4 +239,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <PropertyGroup>
+  <WindowsSDKVersion>10.0.22621.0</WindowsSDKVersion>
+</PropertyGroup>
 </Project>
