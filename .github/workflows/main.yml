@@ -1,1 +1,41 @@
+name: Build AlwaysOnTop
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Windows UWP package
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Restore NuGet packages
+        run: nuget restore AlwaysOnTop.sln
+
+      - name: Build solution
+        run: msbuild AlwaysOnTop.sln /m /p:Configuration=Release /p:Platform=x64
+
+      - name: Collect build outputs
+        shell: pwsh
+        run: |
+          $output = Join-Path $PWD 'AlwaysOnTop\\AlwaysOnTop\\bin\\x64\\Release'
+          $artifact = Join-Path $PWD 'artifacts'
+          if (Test-Path $artifact) { Remove-Item $artifact -Recurse -Force }
+          New-Item -ItemType Directory -Path $artifact | Out-Null
+          Copy-Item -Path "$output\\*" -Destination $artifact -Recurse -Force
+          Write-Host "Build outputs copied to $artifact"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AlwaysOnTop-Release-x64
+          path: artifacts/**
 
