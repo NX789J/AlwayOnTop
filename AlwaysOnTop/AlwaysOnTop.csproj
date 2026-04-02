@@ -102,6 +102,12 @@
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
+  <PropertyGroup>
+    <Language>en-US</Language>
+    <PackageCertificateKeyFile>AlwaysOnTop_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <UseWinUI>true</UseWinUI>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="AboutDialog.xaml.cs">
       <DependentUpon>AboutDialog.xaml</DependentUpon>
