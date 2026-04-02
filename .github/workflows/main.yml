@@ -15,18 +15,47 @@ jobs:
     - name: Cài đặt MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Khôi phục thư viện lõi Windows (Sửa 40 lỗi thiếu namespace)
-      run: msbuild AlwaysOnTop.sln /t:Restore 
-
-    - name: Tiến hành Build dự án
-      # Thêm /p:AppxPackageSigningEnabled=false để bỏ qua lỗi đòi chứng chỉ bảo mật của GitHub
-      run: msbuild AlwaysOnTop.sln /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never /p:AppxPackageSigningEnabled=false
+    - name: Tiến hành Restore và Build dự án cùng lúc
+      # Thêm cờ -restore vào trước để đồng bộ kiến trúc x64 chuẩn xác
+      run: msbuild AlwaysOnTop.sln -restore /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never /p:AppxPackageSigningEnabled=false
 
     - name: Upload file cài đặt để tải về
       uses: actions/upload-artifact@v4
       with:
         name: UngDungCuaToi
+        # Tải về toàn bộ thư mục Release x64
         path: ./**/bin/x64/Release/**/*.* ```
+
+# Bạn hãy **Commit changes** lại file này. Khi chạy tiến trình mới, hệ thống sẽ đồng bộ kiến trúc từ A đến Z và sẽ vượt qua được bảng lỗi đỏ chót này. Chúc bạn thành công lấy được file app của mình!
+# name: Build Windows App
+
+# on:
+#   push:
+#     branches: [ "main" ]
+
+# jobs:
+#   build:
+#     runs-on: windows-latest
+
+#     steps:
+#     - name: Lấy source code về máy chủ
+#       uses: actions/checkout@v4
+
+#     - name: Cài đặt MSBuild
+#       uses: microsoft/setup-msbuild@v2
+
+#     - name: Khôi phục thư viện lõi Windows (Sửa 40 lỗi thiếu namespace)
+#       run: msbuild AlwaysOnTop.sln /t:Restore 
+
+#     - name: Tiến hành Build dự án
+#       # Thêm /p:AppxPackageSigningEnabled=false để bỏ qua lỗi đòi chứng chỉ bảo mật của GitHub
+#       run: msbuild AlwaysOnTop.sln /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never /p:AppxPackageSigningEnabled=false
+
+#     - name: Upload file cài đặt để tải về
+#       uses: actions/upload-artifact@v4
+#       with:
+#         name: UngDungCuaToi
+#         path: ./**/bin/x64/Release/**/*.* ```
 
 # **Những thay đổi quan trọng mình đã làm trong file này:**
 # 1. Xóa bước cài đặt `setup-nuget` (không cần dùng nữa).
