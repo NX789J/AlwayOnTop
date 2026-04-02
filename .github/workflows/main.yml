@@ -15,6 +15,13 @@ jobs:
     - name: Cài đặt MSBuild (Công cụ biên dịch của Microsoft)
       uses: microsoft/setup-msbuild@v2 # Đã cập nhật lên v2
 
+    - name: Cài đặt công cụ NuGet
+      uses: NuGet/setup-nuget@v2.0.0
+
+    - name: Tải các thư viện cần thiết (NuGet Restore)
+      # THAY ĐỔI TÊN FILE Ở ĐÂY
+      run: nuget restore AlwaysOnTop.sln
+
     - name: Tiến hành Build dự án
       # LƯU Ý: Nhớ thay chữ Tên_File_Của_Bạn thành tên file .sln thực tế của bạn (ví dụ: AlwayOnTop.sln)
       run: msbuild AlwaysOnTop.sln /p:Configuration=Release
