@@ -6,21 +6,21 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest # Sử dụng máy chủ Windows của GitHub
+    runs-on: windows-latest
 
     steps:
     - name: Lấy source code về máy chủ
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4 # Đã cập nhật lên v4
 
     - name: Cài đặt MSBuild (Công cụ biên dịch của Microsoft)
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2 # Đã cập nhật lên v2
 
     - name: Tiến hành Build dự án
+      # LƯU Ý: Nhớ thay chữ Tên_File_Của_Bạn thành tên file .sln thực tế của bạn (ví dụ: AlwayOnTop.sln)
       run: msbuild AlwaysOnTop.sln /p:Configuration=Release
 
     - name: Upload file .exe để tải về
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4 # QUAN TRỌNG: Đã sửa v3 thành v4 để sửa lỗi
       with:
         name: Always On Top
-        # Đường dẫn tới thư mục chứa file exe sau khi build xong
         path: ./**/bin/Release/*.exe
