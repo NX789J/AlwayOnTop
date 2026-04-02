@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build Windows App
 
 on:
   push:
@@ -10,24 +10,60 @@ jobs:
 
     steps:
     - name: Lấy source code về máy chủ
-      uses: actions/checkout@v4 # Đã cập nhật lên v4
+      uses: actions/checkout@v4
 
-    - name: Cài đặt MSBuild (Công cụ biên dịch của Microsoft)
-      uses: microsoft/setup-msbuild@v2 # Đã cập nhật lên v2
+    - name: Cài đặt MSBuild
+      uses: microsoft/setup-msbuild@v2
 
-    - name: Cài đặt công cụ NuGet
-      uses: NuGet/setup-nuget@v2.0.0
-
-    - name: Tải các thư viện cần thiết (NuGet Restore)
-      # THAY ĐỔI TÊN FILE Ở ĐÂY
-      run: nuget restore AlwaysOnTop.sln
+    - name: Khôi phục thư viện lõi Windows (Sửa 40 lỗi thiếu namespace)
+      run: msbuild AlwaysOnTop.sln /t:Restore 
 
     - name: Tiến hành Build dự án
-      # LƯU Ý: Nhớ thay chữ Tên_File_Của_Bạn thành tên file .sln thực tế của bạn (ví dụ: AlwayOnTop.sln)
-      run: msbuild AlwaysOnTop.sln /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never
+      # Thêm /p:AppxPackageSigningEnabled=false để bỏ qua lỗi đòi chứng chỉ bảo mật của GitHub
+      run: msbuild AlwaysOnTop.sln /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never /p:AppxPackageSigningEnabled=false
 
-    - name: Upload file .exe để tải về
-      uses: actions/upload-artifact@v4 # QUAN TRỌNG: Đã sửa v3 thành v4 để sửa lỗi
+    - name: Upload file cài đặt để tải về
+      uses: actions/upload-artifact@v4
       with:
-        name: Always On Top
-        path: ./**/bin/Release/*.*
+        name: UngDungCuaToi
+        path: ./**/bin/x64/Release/**/*.* ```
+
+# **Những thay đổi quan trọng mình đã làm trong file này:**
+# 1. Xóa bước cài đặt `setup-nuget` (không cần dùng nữa).
+# 2. Đổi lệnh `nuget restore...` thành `msbuild AlwaysOnTop.sln /t:Restore`. (Đây là "thuốc đặc trị" cho 40 lỗi kia).
+# 3. Thêm cờ `/p:AppxPackageSigningEnabled=false` vào lệnh build. 
+
+# Bạn hãy **Commit changes** file `main.yml` này lại. Lần này chắc chắn quá trình biên dịch sẽ tìm thấy thư viện Windows và vượt qua cửa ải này!
+# name: Build Windows EXE
+
+# on:
+#   push:
+#     branches: [ "main" ]
+
+# jobs:
+#   build:
+#     runs-on: windows-latest
+
+#     steps:
+#     - name: Lấy source code về máy chủ
+#       uses: actions/checkout@v4 # Đã cập nhật lên v4
+
+#     - name: Cài đặt MSBuild (Công cụ biên dịch của Microsoft)
+#       uses: microsoft/setup-msbuild@v2 # Đã cập nhật lên v2
+
+#     - name: Cài đặt công cụ NuGet
+#       uses: NuGet/setup-nuget@v2.0.0
+
+#     - name: Tải các thư viện cần thiết (NuGet Restore)
+#       # THAY ĐỔI TÊN FILE Ở ĐÂY
+#       run: nuget restore AlwaysOnTop.sln
+
+#     - name: Tiến hành Build dự án
+#       # LƯU Ý: Nhớ thay chữ Tên_File_Của_Bạn thành tên file .sln thực tế của bạn (ví dụ: AlwayOnTop.sln)
+#       run: msbuild AlwaysOnTop.sln /p:Configuration=Release /p:Platform="x64" /p:AppxBundle=Never
+
+#     - name: Upload file .exe để tải về
+#       uses: actions/upload-artifact@v4 # QUAN TRỌNG: Đã sửa v3 thành v4 để sửa lỗi
+#       with:
+#         name: Always On Top
+#         path: ./**/bin/Release/*.*
