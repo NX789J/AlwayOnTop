@@ -1,47 +1,70 @@
-name: Build AlwaysOnTop
+name: CI
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
-    name: Build Windows UWP package
-    runs-on: windows-latest
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Remove UTF-8 BOM from C# files
+        run: |-
+          find . -name '*.cs' -exec sed -i '1s/^\xEF\xBB\xBF//' {} +
 
       - name: Restore NuGet packages
-        run: nuget restore AlwaysOnTop.sln
+        run: dotnet restore
 
-      - name: Build solution
-        shell: pwsh
-        run: |
-          $vswhere = "${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vswhere.exe"
-          $vsPath = & $vswhere -latest -requires Microsoft.Component.MSBuild -property installationPath
-          $msbuild = Join-Path $vsPath "MSBuild\\Current\\Bin\\MSBuild.exe"
-          Write-Host "Using MSBuild at $msbuild"
-          & $msbuild AlwaysOnTop.sln /m /p:Configuration=Release /p:Platform=x64
+      - name: Build
+        run: dotnet build
+# name: Build AlwaysOnTop
 
-      - name: Collect build outputs
-        shell: pwsh
-        run: |
-          $output = Join-Path $PWD 'AlwaysOnTop\\AlwaysOnTop\\bin\\x64\\Release'
-          $artifact = Join-Path $PWD 'artifacts'
-          if (Test-Path $artifact) { Remove-Item -Recurse -Force $artifact }
-          New-Item -ItemType Directory -Path $artifact | Out-Null
-          Copy-Item -Path "$output\\*" -Destination $artifact -Recurse -Force
-          Write-Host "Build outputs copied to $artifact"
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AlwaysOnTop-Release-x64
-          path: artifacts/**
+# jobs:
+#   build:
+#     name: Build Windows UWP package
+#     runs-on: windows-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Restore NuGet packages
+#         run: nuget restore AlwaysOnTop.sln
+
+#       - name: Build solution
+#         shell: pwsh
+#         run: |
+#           $vswhere = "${env:ProgramFiles(x86)}\\Microsoft Visual Studio\\Installer\\vswhere.exe"
+#           $vsPath = & $vswhere -latest -requires Microsoft.Component.MSBuild -property installationPath
+#           $msbuild = Join-Path $vsPath "MSBuild\\Current\\Bin\\MSBuild.exe"
+#           Write-Host "Using MSBuild at $msbuild"
+#           & $msbuild AlwaysOnTop.sln /m /p:Configuration=Release /p:Platform=x64
+
+#       - name: Collect build outputs
+#         shell: pwsh
+#         run: |
+#           $output = Join-Path $PWD 'AlwaysOnTop\\AlwaysOnTop\\bin\\x64\\Release'
+#           $artifact = Join-Path $PWD 'artifacts'
+#           if (Test-Path $artifact) { Remove-Item -Recurse -Force $artifact }
+#           New-Item -ItemType Directory -Path $artifact | Out-Null
+#           Copy-Item -Path "$output\\*" -Destination $artifact -Recurse -Force
+#           Write-Host "Build outputs copied to $artifact"
+
+#       - name: Upload build artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: AlwaysOnTop-Release-x64
+#           path: artifacts/**
 
